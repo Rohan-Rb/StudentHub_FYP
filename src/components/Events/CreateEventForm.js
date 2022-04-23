@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import Input from "../FormReuses/Input";
 import Button from "@mui/material/Button";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
 
 import Footer from "../Footer/footer";
 import {
@@ -14,16 +19,12 @@ import {
   Column2,
   Column3,
   Column4,
-  Icon,
-  Item,
-  Text,
-  Message,
-  SizeDiv,
-} from "./ContactElements";
+  RowCol5,
+  RowCol6,
+} from "../ContactUs/ContactElements";
 import { FormReuse, Form } from "../FormReuses/FormReuse";
-import { FaPhone } from "react-icons/fa";
-import { FaLocationArrow } from "react-icons/fa";
-import { FaMailchimp } from "react-icons/fa";
+import axios from "axios";
+// import { useState } from "react";
 
 const initialFieldValues = {
   id: 0,
@@ -31,42 +32,14 @@ const initialFieldValues = {
   email: "",
   mobileNo: "",
   message: "",
+  eventName: "",
 };
 
-export default function Contact() {
+export default function CreateEvent() {
   <h1>Test11</h1>;
 
   const validation = () => {
     let temp = {};
-    if (!values.fullName.trim()) {
-      temp.fullName = "Name required.";
-    } else if (!/^[A-Z a-z]+$/.test(values.fullName)) {
-      temp.fullName = "Alphabetical letters only.";
-    }
-
-    // temp.fullName = values.fullName?"":"This field is required."
-    if (!values.email) {
-      temp.email = "Email Required.";
-    } else if (
-      !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,4}$/.test(values.email)
-    ) {
-      temp.email = "Invalid Email address.";
-    }
-    //temp.email = (/$|.+@.+..+/).test(values.email)?"":"Email is not valid."
-    if (!values.mobileNo) {
-      temp.mobileNo = "Mobile number required.";
-    } else if (!/^[0-9]{10,}$/.test(values.mobileNo)) {
-      temp.mobileNo = "Invalid mobile Number.";
-    }
-    // else if (values.mobileNo.length<9 && /^[0-9]$/i.test(values.mobileNo)) {
-    //     temp.mobileNo="Invalid mobile Number."
-    // }
-    //temp.mobileNo = values.mobileNo.length>9?"":"Mobile number is not valid."
-    // temp.message = values.message?"":"This field is required."
-    if (!values.message) {
-      temp.message = "Field required.";
-    }
-
     if (!values.eventName) {
       temp.eventName = "Name required.";
     } else if (!/^[A-Za-z]+$/.test(values.eventName)) {
@@ -82,17 +55,89 @@ export default function Contact() {
   const { values, setValues, handleInputChange, errors, setErrors, reset } =
     FormReuse(initialFieldValues);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validation()) window.alert("testing...");
+  const [file, setFile] = useState("");
+  const [fileName, setFileName] = useState("");
+
+  const saveFile = (e) => {
+    console.log(e.target.files[0]);
+    setFile(e.target.files[0]);
+    setFileName(e.target.files[0].name);
   };
 
+  var bannerPath = "\\Images\\EventImages\\" + fileName;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (validation()) {
+      // window.alert(values.city + " dasd");
+
+      console.log(file);
+      console.log(fileName);
+
+      var bannerPath = "\\Images\\EventImages\\" + fileName;
+
+      console.log(bannerPath);
+
+      const formData = new FormData();
+      formData.append("eventName", values.eventName);
+      formData.append("organizer", values.eventOrganizer);
+      formData.append("eventType", values.eventType);
+      formData.append("date", values.date);
+      formData.append("startTime", values.startTime);
+      formData.append("endTime", values.endTime);
+      formData.append("cost", values.costPerTicket);
+      formData.append("city", values.city);
+      formData.append("state", values.state);
+      formData.append("venue", values.venue);
+      formData.append("ticketLink", values.buyTicket);
+      formData.append("description", values.description);
+      formData.append("userID", 3);
+      formData.append("formFile", file);
+      formData.append("fileName", fileName);
+
+      await axios
+        .post(
+          "https://localhost:44332/api/Event/SaveEvents",
+          formData
+          // {
+          //   eventName: values.eventName,
+          //   organizer: values.eventOrganizer,
+          //   eventType: values.eventType,
+          //   date: values.date,
+          //   startTime: values.startTime,
+          //   endTime: values.endTime,
+          //   cost: values.costPerTicket,
+          //   city: values.city,
+          //   state: values.state,
+          //   venue: values.venue,
+          //   ticketLink: values.buyTicket,
+          //   description: values.description,
+          //   userID: 3,
+          //   formFile: file,
+          //   fileName: fileName,
+          // }
+        )
+        .then(
+          (response) => {
+            console.log(response);
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+    }
+  };
+
+  const [value, setValue] = React.useState(null);
+
+  console.log(values.eventName, values.eventOrganizer);
+
   return (
-    <SizeDiv>
+    <div className="SizeDiv">
       {/* <Main> */}
       <Form onSubmit={handleSubmit}>
         <FormWrapper>
-          {/* <Headline>Event Registration Form</Headline>
+          <Headline>Event Registration Form</Headline>
           <RowCol1>
             <Column1>
               <Input
@@ -128,7 +173,9 @@ export default function Contact() {
             <Column1>
               <Input
                 label="Date"
+                type="date"
                 name="date"
+                InputLabelProps={{ shrink: true }}
                 value={values.date}
                 onChange={handleInputChange}
                 error={errors.date}
@@ -138,6 +185,8 @@ export default function Contact() {
               <Input
                 label="Start Time"
                 name="startTime"
+                type="time"
+                InputLabelProps={{ shrink: true }}
                 value={values.startTime}
                 onChange={handleInputChange}
                 error={errors.startTime}
@@ -147,6 +196,8 @@ export default function Contact() {
               <Input
                 label="End Time"
                 name="endTime"
+                type="time"
+                InputLabelProps={{ shrink: true }}
                 value={values.endTime}
                 onChange={handleInputChange}
                 error={errors.endTime}
@@ -166,32 +217,32 @@ export default function Contact() {
             <Column1>
               <Input
                 label="Venue"
-                name="Venue"
-                value={values.Venue}
+                name="venue"
+                value={values.venue}
                 onChange={handleInputChange}
-                error={errors.Venue}
+                error={errors.venue}
               />
             </Column1>
             <Column2>
               <Input
-                label="Online Event"
-                name="onlineEvent"
-                value={values.onlineEvent}
+                label="City"
+                name="city"
+                value={values.city}
                 onChange={handleInputChange}
-                error={errors.onlineEvent}
+                error={errors.city}
               />
             </Column2>
             <Column3>
               <Input
-                label="TBA"
-                name="tba"
-                value={values.tba}
+                label="State"
+                name="state"
+                value={values.state}
                 onChange={handleInputChange}
-                error={errors.tba}
+                error={errors.state}
               />
             </Column3>
           </RowCol3>
-          <RowCol1>
+          {/* <RowCol1>
             <Column1>
               <Input
                 label="Auto Address"
@@ -201,11 +252,11 @@ export default function Contact() {
                 error={errors.autoAdd}
               />
             </Column1>
-          </RowCol1>
+          </RowCol1> */}
           <RowCol2>
             <Column1>
               <Input
-                label="Buy Ticket"
+                label="Buy Ticket Link"
                 name="buyTicket"
                 value={values.buyTicket}
                 onChange={handleInputChange}
@@ -213,13 +264,24 @@ export default function Contact() {
               />
             </Column1>
             <Column2>
-              <Input
+              {/* <Input
                 label="Refund"
                 name="refund"
                 value={values.refund}
                 onChange={handleInputChange}
                 error={errors.refund}
-              />
+              /> */}
+              <FormControl>
+                <FormLabel>Refund</FormLabel>
+                <RadioGroup row>
+                  <FormControlLabel
+                    value="yes"
+                    control={<Radio />}
+                    label="Yes"
+                  />
+                  <FormControlLabel value="no" control={<Radio />} label="No" />
+                </RadioGroup>
+              </FormControl>
             </Column2>
           </RowCol2>
           <RowCol1>
@@ -234,42 +296,14 @@ export default function Contact() {
                 error={errors.description}
               />
             </Column1>
-          </RowCol1> */}
-
-          {/* ================================================================================================= */}
-          <Headline>Contact Us</Headline>
-          <RowCol2>
+          </RowCol1>
+          {/* <input type="file" onChange={saveFile} /> */}
+          <Button variant="contained" component="label">
+            Upload File
+            <input type="file" hidden onChange={saveFile} />
+          </Button>
+          <RowCol6>
             <Column1>
-              <Input
-                label="Full Name"
-                name="fullName"
-                value={values.fullName}
-                onChange={handleInputChange}
-                error={errors.fullName}
-              />
-              <Input
-                label="Email"
-                name="email"
-                value={values.email}
-                onChange={handleInputChange}
-                error={errors.email}
-              />
-              <Input
-                label="Mobile"
-                name="mobileNo"
-                value={values.mobileNo}
-                onChange={handleInputChange}
-                error={errors.mobileNo}
-              />
-              <Input
-                label="Message"
-                multiline={true}
-                name="message"
-                rows={5}
-                value={values.message}
-                onChange={handleInputChange}
-                error={errors.message}
-              />
               <Button
                 variant="contained"
                 size="large"
@@ -278,6 +312,8 @@ export default function Contact() {
               >
                 Submit
               </Button>
+            </Column1>
+            <Column2>
               <Button
                 variant="contained"
                 size="large"
@@ -287,41 +323,13 @@ export default function Contact() {
               >
                 Reset
               </Button>
-            </Column1>
-
-            <Column2>
-              <Item>
-                <Icon>
-                  <FaLocationArrow fontSize="large" />
-                </Icon>
-                <Text>Kathmandu, Nepal</Text>
-              </Item>
-              <Item>
-                <Icon>
-                  <FaPhone fontSize="large" />
-                </Icon>
-                <Text>+977-9876543210</Text>
-              </Item>
-              <Item>
-                <Icon>
-                  <FaMailchimp fontSize="large" />
-                </Icon>
-                <Text>Mailme@gmail.com</Text>
-              </Item>
-              {/* <Item>
-                                    <Icon><LocationOnIcon fontSize="large"/></Icon>
-                                    <Text>asdasdasd</Text>
-                                </Item> */}
-              <Message>
-                I hope you found something that piqued your interest here. We
-                would be very happy yo answer any questions. Do check back for
-                future updates.
-              </Message>
             </Column2>
-          </RowCol2>
+          </RowCol6>
+
+          <input type="button" value="upload" />
         </FormWrapper>
       </Form>
       {/* </Main> */}
-    </SizeDiv>
+    </div>
   );
 }

@@ -10,14 +10,9 @@ const Teams = () => {
             <TeamsContainer>
                 <TeamsH1>Our Team</TeamsH1>
                 <TeamsWrapper>
-                    <TeamsCard>
-                        <TeamsIcon src={icon1} />
-                        <TeamsH2>Aakash Amatya</TeamsH2>
-                        <TeamsP>Something about yourself.</TeamsP>
-                    </TeamsCard>
-                    <TeamsCard>
-                        <TeamsIcon src={icon2} />
-                        <TeamsH2>Vvek Shrestha</TeamsH2>
+                <TeamsCard>
+                        <TeamsIcon src={icon3} />
+                        <TeamsH2>Rohan Rajbhandari</TeamsH2>
                         <TeamsP>Something about yourself.</TeamsP>
                     </TeamsCard>
                     <TeamsCard>
@@ -26,8 +21,13 @@ const Teams = () => {
                         <TeamsP>Something about yourself.</TeamsP>
                     </TeamsCard>
                     <TeamsCard>
-                        <TeamsIcon src={icon4} />
-                        <TeamsH2>Bibek Paudyal</TeamsH2>
+                        <TeamsIcon src={icon3} />
+                        <TeamsH2>Rohan Rajbhandari</TeamsH2>
+                        <TeamsP>Something about yourself.</TeamsP>
+                    </TeamsCard>
+                    <TeamsCard>
+                        <TeamsIcon src={icon3} />
+                        <TeamsH2>Rohan Rajbhandari</TeamsH2>
                         <TeamsP>Something about yourself.</TeamsP>
                     </TeamsCard>
                 </TeamsWrapper>
